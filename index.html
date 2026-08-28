@@ -765,30 +765,32 @@
       }
 
       const submitBtn = document.getElementById('submit-btn');
-      const origText = submitBtn.textContent;
       submitBtn.textContent = 'Sending...';
       submitBtn.disabled = true;
 
       try {
-        /* Send email payload to Web3Forms / Formspree service targeting accemmanueljahswill@gmail.com */
-        const formData = new FormData();
-        formData.append('access_key', 'YOUR_WEB3FORMS_ACCESS_KEY'); // Free key from web3forms.com
-        formData.append('subject', `New Volunteer Application from ${name}`);
-        formData.append('from_name', 'Volunteer Portal');
-        formData.append('to_email', 'accemmanueljahswill@gmail.com');
-        formData.append('Name', name);
-        formData.append('Email', email);
-        formData.append('Phone', phone);
-        formData.append('Prior Experience', exp);
-        formData.append('Activities to Help With', helpChecked.join(', ') || 'None selected');
-        formData.append('Additional Notes', extra || 'None');
-
-        await fetch('https://api.web3forms.com/submit', {
+        /* FormSubmit AJAX API - sends to accemmanueljahswill@gmail.com + autoresponder to volunteer */
+        await fetch('https://formsubmit.co/ajax/accemmanueljahswill@gmail.com', {
           method: 'POST',
-          body: formData
-        }).catch(() => { /* continue showing success gracefully */ });
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            _subject: `New Volunteer Application from ${name}`,
+            _autoresponse: `Hi ${name},\n\nThank you for signing up to volunteer with us! We have received your application and will be in touch within 2–3 days with next steps.\n\nBest regards,\nCommunity Volunteer Team`,
+            _template: 'table',
+            _captcha: 'false',
+            'Full Name': name,
+            'Email Address': email,
+            'Phone Number': phone,
+            'Prior Experience': exp,
+            'Activities to Help With': helpChecked.join(', ') || 'None selected',
+            'Additional Notes': extra || 'None'
+          })
+        });
       } catch (err) {
-        console.log('Email send notification handled:', err);
+        console.log('FormSubmit notification status:', err);
       }
 
       /* success transition */
