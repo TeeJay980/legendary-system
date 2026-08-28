@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Become a Volunteer – Second Chance Shelter</title>
+  <meta name="description"
+    content="Join Second Chance Shelter as a volunteer. Help care for dogs, take them on walks, and bring them one step closer to a loving home." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* ─── Reset ─────────────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ─── Tokens ─────────────────────────────────────────── */
+    :root {
+      --cream: #f5ede0;
+      --orange: #d97b3a;
+      --brown: #2b1a0e;
+      --muted: #7a5c40;
+      --border: #dcc9b0;
+      --bone-bg: #f0e0c8;
+      --maroon: #6b2525;
+      --maroon-h: #882e2e;
+      --white: #ffffff;
+      --radius-card: 18px;
+      --radius-input: 8px;
+    }
+
+    /* ─── Page ───────────────────────────────────────────── */
+    body {
+      min-height: 100vh;
+      background: #e8ddd0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      padding: 32px 16px;
+    }
+
+    /* ─── Card ───────────────────────────────────────────── */
+    .card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 100%;
+      max-width: 860px;
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      box-shadow: none;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       LEFT PANEL
+    ═══════════════════════════════════════════════════════ */
+    .panel-left {
+      position: relative;
+      min-height: 580px;
+      overflow: hidden;
+    }
+
+    .hero-photo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    /* gradient so text is readable */
+    .photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom,
+          rgba(0, 0, 0, 0) 40%,
+          rgba(20, 8, 2, .72) 100%);
+    }
+
+    /* Benefits sits at the bottom */
+    .benefits {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      /* 40px sides = room for knobs (14px) + gap so they never touch the edge */
+      padding: 0 40px 24px;
+    }
+
+    .benefits-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 20px;
+      letter-spacing: .1px;
+    }
+
+    /* ── Bone wrapper ── */
+    .bone-outer {
+      padding: 0;
+      /* benefits padding already gives knob room */
+    }
+
+    /* ── Bone: pill body + knobs as a flex row ─────────────── */
+    .bone-body {
+      display: flex;
+      align-items: center;
+    }
+
+    /* The cream pill that holds the text */
+    .bone-pill {
+      flex: 1;
+      background: var(--bone-bg);
+      border-radius: 999px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Each end = two stacked circles that overlap the pill */
+    .bone-knob {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+
+    /* Left knob overlaps pill on the right, right knob on the left */
+    .bone-knob:first-child {
+      margin-right: -6px;
+    }
+
+    .bone-knob:last-child {
+      margin-left: -6px;
+    }
+
+    .bone-knob span {
+      display: block;
+      width: 20px;
+      height: 20px;
+      background: var(--bone-bg);
+      border-radius: 50%;
+    }
+
+    /* ── Benefit items ────────────────────────────────── */
+    .benefit {
+      flex: 1;
+      text-align: center;
+      font-size: .7rem;
+      font-weight: 500;
+      color: #3b1e0e;
+      line-height: 1.5;
+      padding: 0 8px;
+    }
+
+    .benefit em {
+      font-style: normal;
+      font-weight: 700;
+      color: var(--orange);
+    }
+
+    .bone-divider {
+      width: 1px;
+      height: 32px;
+      background: rgba(59, 30, 14, .2);
+      flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       RIGHT PANEL
+    ═══════════════════════════════════════════════════════ */
+    .panel-right {
+      background: var(--cream);
+      padding: 32px 36px 28px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* ── Brand ────────────────────────────────────────── */
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: var(--orange);
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .3px;
+      margin-bottom: 18px;
+    }
+
+    /* ── Hero text ────────────────────────────────────── */
+    .heading-main {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.85rem;
+      font-weight: 400;
+      color: var(--brown);
+      text-align: center;
+      line-height: 1.05;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+
+    .tagline {
+      text-align: center;
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--orange);
+      margin-bottom: 12px;
+    }
+
+    .description {
+      text-align: center;
+      font-size: .76rem;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 340px;
+      margin: 0 auto 18px;
+    }
+
+    /* ── Divider with bone ────────────────────────────── */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .divider-icon {
+      font-size: .95rem;
+      line-height: 1;
+    }
+
+    /* ── Form heading ────────────────────────────────── */
+    .form-heading {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--brown);
+      margin-bottom: 14px;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Form grid ───────────────────────────────────── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 14px;
+      margin-bottom: 0;
+    }
+
+    .fg {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .fg label {
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--brown);
+    }
+
+    /* text / email / tel / select / textarea */
+    input[type=text],
+    input[type=email],
+    input[type=tel],
+    select,
+    textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-input);
+      background: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .76rem;
+      color: var(--brown);
+      outline: none;
+      transition: border-color .18s, box-shadow .18s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(217, 123, 58, .14);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #b8a090;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23a07050'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+      cursor: pointer;
+      color: #b8a090;
+      /* placeholder-like when default */
+    }
+
+    select.chosen {
+      color: var(--brown);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 82px;
+    }
+
+    /* Checkboxes section */
+    .check-label-text {
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--brown);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .checks {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: .74rem;
+      color: var(--brown);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .check-row input[type=checkbox] {
+      width: 13px;
+      height: 13px;
+      accent-color: var(--orange);
+      cursor: pointer;
+      flex-shrink: 0;
+      border-radius: 3px;
+    }
+
+    /* ── Terms + Submit row ──────────────────────────── */
+    .bottom-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .terms-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: .73rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .terms-label input[type=checkbox] {
+      width: 13px;
+      height: 13px;
+      accent-color: var(--orange);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .terms-link {
+      color: var(--orange);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .terms-link:hover {
+      text-decoration: underline;
+    }
+
+    .btn-volunteer {
+      background: var(--maroon);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-input);
+      padding: 10px 22px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      letter-spacing: .2px;
+      transition: background .18s, transform .12s, box-shadow .18s;
+      box-shadow: 0 3px 10px rgba(107, 37, 37, .35);
+    }
+
+    .btn-volunteer:hover {
+      background: var(--maroon-h);
+      transform: translateY(-1px);
+      box-shadow: 0 5px 16px rgba(107, 37, 37, .45);
+    }
+
+    .btn-volunteer:active {
+      transform: none;
+    }
+
+    /* ── Note ────────────────────────────────────────── */
+    .note {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      font-size: .67rem;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.55;
+    }
+
+    .note strong {
+      color: var(--brown);
+    }
+
+    /* ── Success ──────────────────────────────────────── */
+    .success {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+      padding: 40px 0;
+      animation: fadeUp .35s ease;
+    }
+
+    .success-icon {
+      font-size: 3rem;
+    }
+
+    .success h2 {
+      font-family: 'Instrument Serif', serif;
+      font-weight: 400;
+      font-size: 1.7rem;
+      color: var(--brown);
+    }
+
+    .success p {
+      font-size: .83rem;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 280px;
+    }
+
+    /* ─── Animations ──────────────────────────────────── */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20% {
+        transform: translateX(-5px);
+      }
+
+      40% {
+        transform: translateX(5px);
+      }
+
+      60% {
+        transform: translateX(-3px);
+      }
+
+      80% {
+        transform: translateX(3px);
+      }
+    }
+
+    /* ─── Responsive ──────────────────────────────────── */
+    @media (max-width: 700px) {
+      .card {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+      }
+
+      .panel-left {
+        min-height: 280px;
+      }
+
+      .panel-right {
+        padding: 28px 24px 22px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .heading-main {
+        font-size: 1.65rem;
+      }
+
+      .bottom-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .btn-volunteer {
+        align-self: stretch;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="card" role="main">
+
+    <!-- ══════════════ LEFT PANEL ══════════════ -->
+    <section class="panel-left" aria-label="Community cleaning photo and benefits">
+      <img class="hero-photo" src="cleaning_hero.jpg"
+        alt="African boy and girl smiling together during a community cleanup day" />
+      <div class="photo-overlay" aria-hidden="true"></div>
+
+      <div class="benefits">
+        <p class="benefits-title">Benefits</p>
+
+        <div class="bone-outer">
+          <div class="bone-body">
+
+            <!-- Left knob: two stacked circles -->
+            <div class="bone-knob" aria-hidden="true">
+              <span></span>
+              <span></span>
+            </div>
+
+            <!-- Pill body with the three benefits -->
+            <div class="bone-pill" role="list">
+              <div class="benefit" role="listitem">
+                make a real <em>difference</em><br>in our community
+              </div>
+              <div class="bone-divider" aria-hidden="true"></div>
+              <div class="benefit" role="listitem">
+                keep spaces <em>clean</em><br>and healthy
+              </div>
+              <div class="bone-divider" aria-hidden="true"></div>
+              <div class="benefit" role="listitem">
+                build a<br><em>supportive<br>community</em>
+              </div>
+            </div>
+
+            <!-- Right knob: two stacked circles -->
+            <div class="bone-knob" aria-hidden="true">
+              <span></span>
+              <span></span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════ RIGHT PANEL ══════════════ -->
+    <section class="panel-right" aria-label="Volunteer application">
+
+      <!-- Brand -->
+      <div class="brand">
+        ivoterngo.name.ng
+      </div>
+
+      <!-- Hero -->
+      <h1 class="heading-main">Join the Cleanup</h1>
+      <p class="tagline">A clean space for all. A brighter world for them.</p>
+      <p class="description">
+        Every space matters. Our volunteers help clean auditoriums, offices, orphanages, and perform deep cleaning to
+        create healthier, happier environments for everyone.<br /><br />
+        No prior experience needed — just willingness and a bit of your time.
+      </p>
+
+      <!-- Divider -->
+      <div class="section-divider" aria-hidden="true">
+        <span class="divider-icon">🧹</span>
+      </div>
+
+      <!-- Form -->
+      <h2 class="form-heading">Volunteer Application</h2>
+
+      <form id="vol-form" novalidate>
+        <div class="form-grid">
+
+          <!-- Full Name -->
+          <div class="fg">
+            <label for="f-name">Full Name</label>
+            <input type="text" id="f-name" name="name" placeholder="" autocomplete="name" required />
+          </div>
+
+          <!-- Email -->
+          <div class="fg">
+            <label for="f-email">Email Address</label>
+            <input type="email" id="f-email" name="email" placeholder="" autocomplete="email" required />
+          </div>
+
+          <!-- Phone -->
+          <div class="fg">
+            <label for="f-phone">Phone Number</label>
+            <input type="tel" id="f-phone" name="phone" placeholder="" autocomplete="tel" required />
+          </div>
+
+          <!-- Experience -->
+          <div class="fg">
+            <label for="f-exp">Do you have prior cleaning experience?</label>
+            <select id="f-exp" name="experience" required>
+              <option value="" disabled selected>Select an option</option>
+              <option value="yes-pro">Yes, extensive experience</option>
+              <option value="yes-some">Yes, some experience</option>
+              <option value="first-time">First time volunteering</option>
+            </select>
+          </div>
+
+          <!-- Help with (checkboxes) -->
+          <div class="fg">
+            <span class="check-label-text">What would you like to help with?</span>
+            <div class="checks" role="group" aria-label="Volunteer activities">
+              <label class="check-row">
+                <input type="checkbox" id="c-auditorium" name="help" value="auditorium-cleaning" />
+                Auditorium cleaning
+              </label>
+              <label class="check-row">
+                <input type="checkbox" id="c-office" name="help" value="office-cleaning" />
+                Office cleaning
+              </label>
+              <label class="check-row">
+                <input type="checkbox" id="c-deep" name="help" value="deep-cleaning" />
+                Deep cleaning
+              </label>
+              <label class="check-row">
+                <input type="checkbox" id="c-orphanage" name="help" value="orphanage-cleaning" />
+                Orphanage cleaning
+              </label>
+            </div>
+          </div>
+
+          <!-- Extra notes -->
+          <div class="fg">
+            <label for="f-extra">
+              Anything else you'd share?
+              <span style="font-weight:400;color:var(--muted)">(optional)</span>
+            </label>
+            <textarea id="f-extra" name="extra" placeholder=""></textarea>
+          </div>
+
+        </div><!-- /form-grid -->
+
+        <!-- Terms + Submit in one row -->
+        <div class="bottom-row">
+          <label class="terms-label" for="f-terms">
+            <input type="checkbox" id="f-terms" name="terms" required />
+            I agree with the <a href="#" class="terms-link" id="terms-link">Terms and Conditions</a>
+          </label>
+          <button type="submit" class="btn-volunteer" id="submit-btn">I volunteer!</button>
+        </div>
+
+      </form>
+
+      <!-- Success (shown on submit) -->
+      <div class="success" id="success-panel" role="alert" aria-live="polite">
+        <div class="success-icon">🎸</div>
+        <h2>Welcome to the band!</h2>
+        <p>Thank you for joining. We'll reach out within 2–3 days with next steps. Get ready to make some music!</p>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    /* Select colour fix */
+    const sel = document.getElementById('f-exp');
+    sel.addEventListener('change', () => sel.classList.add('chosen'));
+
+    /* Terms link */
+    document.getElementById('terms-link').addEventListener('click', e => {
+      e.preventDefault();
+      alert('Terms & Conditions\n\n• Respect all participants and their musical journey.\n• Honour your agreed session schedule.\n• Keep all personal information of participants confidential.\n• Report any concerns immediately to the programme coordinator.\n\nThank you for sharing your love of music! 🎵');
+    });
+
+    /* Form submit */
+    document.getElementById('vol-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById('f-name').value.trim();
+      const email = document.getElementById('f-email').value.trim();
+      const phone = document.getElementById('f-phone').value.trim();
+      const exp = sel.value;
+      const terms = document.getElementById('f-terms').checked;
+
+      const bad = [
+        !name && document.getElementById('f-name'),
+        !email && document.getElementById('f-email'),
+        !phone && document.getElementById('f-phone'),
+        !exp && sel,
+        !terms && document.getElementById('f-terms'),
+      ].filter(Boolean);
+
+      if (bad.length) {
+        /* shake form */
+        this.style.animation = 'none';
+        void this.offsetHeight;
+        this.style.animation = 'shake .4s ease';
+        bad.forEach(el => {
+          el.style.borderColor = '#c0392b';
+          el.style.boxShadow = '0 0 0 3px rgba(192,57,43,.18)';
+          const clear = () => { el.style.borderColor = ''; el.style.boxShadow = ''; };
+          el.addEventListener('input', clear, { once: true });
+          el.addEventListener('change', clear, { once: true });
+        });
+        return;
+      }
+
+      /* success */
+      this.style.animation = 'fadeOut .3s ease forwards';
+      setTimeout(() => {
+        this.style.display = 'none';
+        document.getElementById('success-panel').style.display = 'flex';
+      }, 280);
+    });
+  </script>
+
+</body>
+
+</html>
