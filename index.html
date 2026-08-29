@@ -4,14 +4,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Become a Volunteer – Second Chance Shelter</title>
+  <title>Become a Volunteer – ivoterngo Community Cleaning</title>
   <meta name="description"
-    content="Join Second Chance Shelter as a volunteer. Help care for dogs, take them on walks, and bring them one step closer to a loving home." />
+    content="Join ivoterngo as a volunteer. Help clean auditoriums, offices, orphanages and create healthier, happier community spaces." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
     rel="stylesheet" />
+
+  <!-- intl-tel-input: country code phone picker -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.1/build/css/intlTelInput.css" />
 
   <style>
     /* ─── Reset ─────────────────────────────────────────── */
@@ -304,6 +307,104 @@
       appearance: none;
     }
 
+    /* ── intl-tel-input overrides (v23) ───────────── */
+    /* Wrapper fills the form column */
+    .iti {
+      width: 100%;
+      display: block;
+    }
+
+    /* The actual <input> inside the iti wrapper */
+    .iti input[type=tel] {
+      width: 100%;
+      /* separateDialCode shows flag + "+234" on the left — needs ~96px room */
+      padding: 8px 10px 8px 96px !important;
+      height: 36px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-input);
+      background: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .76rem;
+      color: var(--brown);
+      outline: none;
+      transition: border-color .18s, box-shadow .18s;
+      -webkit-appearance: none;
+      appearance: none;
+      box-sizing: border-box;
+    }
+
+    .iti input[type=tel]:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(217, 123, 58, .14);
+    }
+
+    .iti input[type=tel]::placeholder {
+      color: #b8a090;
+    }
+
+    /* Flag + dial-code button on the left */
+    .iti__country-selector {
+      height: 36px;
+      border-right: 1.5px solid var(--border);
+      background: #faf3ea;
+      padding: 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: var(--radius-input) 0 0 var(--radius-input);
+    }
+
+    .iti__country-selector:hover,
+    .iti__country-selector:focus {
+      background: #f0e6d6;
+      outline: none;
+    }
+
+    /* Dial code text next to the flag */
+    .iti__selected-dial-code {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .74rem;
+      font-weight: 600;
+      color: var(--brown);
+    }
+
+    /* Country dropdown list */
+    .iti__dropdown-content {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-input);
+      box-shadow: 0 8px 24px rgba(43, 26, 14, .12);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .76rem;
+      color: var(--brown);
+    }
+
+    /* Search box inside dropdown */
+    .iti__search-input {
+      border: none;
+      border-bottom: 1px solid var(--border);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .76rem;
+      color: var(--brown);
+      padding: 7px 10px;
+      width: 100%;
+      outline: none;
+      background: var(--white);
+    }
+
+    /* Highlighted country row */
+    .iti__country.iti__highlight,
+    .iti__country:hover {
+      background: #f5ede0;
+    }
+
+    .iti__country-name {
+      color: var(--brown);
+    }
+
+    .iti__dial-code {
+      color: var(--muted);
+    }
+
     input:focus,
     select:focus,
     textarea:focus {
@@ -430,6 +531,25 @@
 
     .btn-volunteer:active {
       transform: none;
+    }
+
+    /* ── Error banner ─────────────────────────────── */
+    .error-banner {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 9px 12px;
+      background: rgba(192, 57, 43, .08);
+      border: 1.5px solid rgba(192, 57, 43, .3);
+      border-radius: var(--radius-input);
+      font-size: .74rem;
+      color: #a02020;
+      line-height: 1.4;
+    }
+
+    .error-banner.visible {
+      display: flex;
     }
 
     /* ── Note ────────────────────────────────────────── */
@@ -647,7 +767,8 @@
           <!-- Phone -->
           <div class="fg">
             <label for="f-phone">Phone Number</label>
-            <input type="tel" id="f-phone" name="phone" placeholder="" autocomplete="tel" required />
+            <!-- intl-tel-input wraps this input with the flag + dial-code selector -->
+            <input type="tel" id="f-phone" name="phone" autocomplete="tel" required />
           </div>
 
           <!-- Experience -->
@@ -708,49 +829,92 @@
 
       <!-- Success (shown on submit) -->
       <div class="success" id="success-panel" role="alert" aria-live="polite">
-        <div class="success-icon">🎸</div>
-        <h2>Welcome to the band!</h2>
-        <p>Thank you for joining. We'll reach out within 2–3 days with next steps. Get ready to make some music!</p>
+        <div class="success-icon">🧹</div>
+        <h2>You're on the team!</h2>
+        <p>Thank you for signing up. We'll reach out within 2–3 days with your first assignment. Get ready to make a difference!</p>
+      </div>
+
+      <!-- Error banner (shown if email delivery fails) -->
+      <div class="error-banner" id="error-banner" role="alert">
+        ⚠️ Something went wrong sending your application. Please try again or email us directly.
       </div>
 
     </section>
   </main>
 
+  <!-- intl-tel-input JS -->
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.1/build/js/intlTelInput.min.js"></script>
+  <!-- EmailJS SDK (sends confirmation email to the volunteer) -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
   <script>
-    /* Select colour fix */
+    /* ─── EmailJS setup ──────────────────────────────────────────────────────
+       STEP 1 ▶ Sign up free at https://www.emailjs.com
+       STEP 2 ▶ Create an Email Service (Gmail / Outlook / etc.) and copy the Service ID
+       STEP 3 ▶ Create an Email Template. In the template body use these variables:
+                  {{to_name}}      – volunteer's full name
+                  {{to_email}}     – volunteer's email (set as the "To Email" field)
+                  {{phone}}        – phone number with country code
+                  {{activities}}   – chosen cleaning activities
+                  {{experience}}   – experience level
+                  {{message}}      – additional notes
+       STEP 4 ▶ Copy your Public Key from Account → API Keys
+       STEP 5 ▶ Fill in the three constants below and delete this comment block.
+    ─────────────────────────────────────────────────────────────────────── */
+    const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // ← paste here
+    const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // ← paste here
+    const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // ← paste here
+
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+    /* ─── intl-tel-input init ─────────────────────────────────────────────── */
+    const phoneInput = document.getElementById('f-phone');
+    const iti = window.intlTelInput(phoneInput, {
+      initialCountry: 'ng',          /* default to Nigeria */
+      strictMode: true,
+      separateDialCode: true,
+      utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.1/build/js/utils.js',
+    });
+
+    /* ─── Select colour fix ───────────────────────────────────────────────── */
     const sel = document.getElementById('f-exp');
     sel.addEventListener('change', () => sel.classList.add('chosen'));
 
-    /* Terms link */
+    /* ─── Terms link ──────────────────────────────────────────────────────── */
     document.getElementById('terms-link').addEventListener('click', e => {
       e.preventDefault();
-      alert('Terms & Conditions\n\n• Respect all participants and their musical journey.\n• Honour your agreed session schedule.\n• Keep all personal information of participants confidential.\n• Report any concerns immediately to the programme coordinator.\n\nThank you for sharing your love of music! 🎵');
+      alert('Terms & Conditions\n\n• Treat all community spaces and fellow volunteers with respect.\n• Arrive on time and honour your agreed cleaning schedule.\n• Use provided equipment safely and return it after each session.\n• Keep all personal information of participants confidential.\n• Report any safety concerns immediately to the programme coordinator.\n\nThank you for helping us build a cleaner, healthier community! 🧹');
     });
 
-    /* Form submit */
+    /* ─── Form submit ─────────────────────────────────────────────────────── */
     document.getElementById('vol-form').addEventListener('submit', async function (e) {
       e.preventDefault();
 
-      const name = document.getElementById('f-name').value.trim();
-      const email = document.getElementById('f-email').value.trim();
-      const phone = document.getElementById('f-phone').value.trim();
-      const exp = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : sel.value;
-      const terms = document.getElementById('f-terms').checked;
-      const extra = document.getElementById('f-extra').value.trim();
+      const name    = document.getElementById('f-name').value.trim();
+      const email   = document.getElementById('f-email').value.trim();
+      /* Get full international number from intl-tel-input (e.g. +234 801 234 5678) */
+      const phone   = iti.getNumber();
+      const expVal  = sel.value;        /* '' when placeholder is still selected */
+      const expText = expVal ? sel.options[sel.selectedIndex].text : '';
+      const terms   = document.getElementById('f-terms').checked;
+      const extra   = document.getElementById('f-extra').value.trim();
 
       const helpChecked = Array.from(document.querySelectorAll('input[name="help"]:checked'))
         .map(cb => cb.parentElement.textContent.trim());
 
+      /* Validate phone using intl-tel-input's built-in validator */
+      const phoneRawEmpty = !phoneInput.value.trim();
+      const phoneInvalid  = !phoneRawEmpty && !iti.isValidNumber();
+
       const bad = [
-        !name && document.getElementById('f-name'),
-        !email && document.getElementById('f-email'),
-        !phone && document.getElementById('f-phone'),
-        !exp && sel,
-        !terms && document.getElementById('f-terms'),
+        !name                        && document.getElementById('f-name'),
+        !email                       && document.getElementById('f-email'),
+        (phoneRawEmpty||phoneInvalid) && phoneInput,
+        (expVal === '')              && sel,
+        !terms                       && document.getElementById('f-terms'),
       ].filter(Boolean);
 
       if (bad.length) {
-        /* shake form */
         this.style.animation = 'none';
         void this.offsetHeight;
         this.style.animation = 'shake .4s ease';
@@ -765,11 +929,13 @@
       }
 
       const submitBtn = document.getElementById('submit-btn');
+      const errBanner = document.getElementById('error-banner');
       submitBtn.textContent = 'Sending...';
       submitBtn.disabled = true;
+      errBanner.classList.remove('visible');
 
       try {
-        /* Web3Forms API - sends to mctjay80@gmail.com */
+        /* ── 1. Notify form owner via Web3Forms ── */
         const formData = new FormData();
         formData.append('access_key', '3a45032c-49e7-40d2-b8be-b9048c0e388a');
         formData.append('subject', `New Volunteer Application from ${name}`);
@@ -777,19 +943,34 @@
         formData.append('Full Name', name);
         formData.append('Email Address', email);
         formData.append('Phone Number', phone);
-        formData.append('Prior Experience', exp);
+        formData.append('Prior Experience', expText);
         formData.append('Activities to Help With', helpChecked.join(', ') || 'None selected');
         formData.append('Additional Notes', extra || 'None');
 
-        await fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          body: formData
-        });
+        const res  = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.message || 'Web3Forms failed');
+
+        /* ── 2. Send confirmation email to the volunteer via EmailJS ── */
+        if (EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+          await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+            to_name:    name,
+            to_email:   email,
+            phone:      phone,
+            activities: helpChecked.join(', ') || 'None selected',
+            experience: expText,
+            message:    extra || 'None',
+          });
+        }
       } catch (err) {
-        console.log('Web3Forms notification status:', err);
+        console.error('Submission error:', err);
+        submitBtn.textContent = 'I volunteer!';
+        submitBtn.disabled = false;
+        errBanner.classList.add('visible');
+        return;
       }
 
-      /* success transition */
+      /* ── Success transition ── */
       this.style.animation = 'fadeOut .3s ease forwards';
       setTimeout(() => {
         this.style.display = 'none';
