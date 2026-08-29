@@ -16,6 +16,9 @@
   <!-- intl-tel-input: country code phone picker -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.1/build/css/intlTelInput.css" />
 
+  <!-- Cloudflare Turnstile -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
   <style>
     /* ─── Reset ─────────────────────────────────────────── */
     *,
@@ -533,6 +536,18 @@
       transform: none;
     }
 
+    /* ── Turnstile widget ─────────────────────────── */
+    .turnstile-row {
+      margin-top: 14px;
+    }
+
+    /* Error state: highlight the widget container */
+    .turnstile-row.ts-error .cf-turnstile {
+      outline: 2px solid #c0392b;
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+
     /* ── Error banner ─────────────────────────────── */
     .error-banner {
       display: none;
@@ -816,6 +831,24 @@
 
         </div><!-- /form-grid -->
 
+        <!-- Cloudflare Turnstile widget -->
+        <!--
+          SITEKEY SETUP:
+          1. Go to https://dash.cloudflare.com → Turnstile → Add site
+          2. Enter your domain, choose "Managed" challenge type
+          3. Copy the Site Key and replace the data-sitekey value below
+          4. The current key (1x00000000000000000000AA) is a TEST key — always passes,
+             safe to use during development. Replace before going fully live.
+        -->
+        <div class="turnstile-row" id="turnstile-row">
+          <div class="cf-turnstile"
+            data-sitekey="1x00000000000000000000AA"
+            data-theme="light"
+            data-size="normal"
+            id="cf-turnstile">
+          </div>
+        </div>
+
         <!-- Terms + Submit in one row -->
         <div class="bottom-row">
           <label class="terms-label" for="f-terms">
@@ -885,6 +918,10 @@
       const phoneRawEmpty = !phoneInput.value.trim();
       const phoneInvalid  = !phoneRawEmpty && !iti.isValidNumber();
 
+      /* Turnstile token — set by Cloudflare after user passes the challenge */
+      const tsToken = document.querySelector('[name="cf-turnstile-response"]')?.value || '';
+      const tsRow   = document.getElementById('turnstile-row');
+
       const bad = [
         !name                        && document.getElementById('f-name'),
         !email                       && document.getElementById('f-email'),
@@ -893,7 +930,10 @@
         !terms                       && document.getElementById('f-terms'),
       ].filter(Boolean);
 
-      if (bad.length) {
+      /* Also block if Turnstile hasn't been completed */
+      const tsIncomplete = !tsToken;
+
+      if (bad.length || tsIncomplete) {
         this.style.animation = 'none';
         void this.offsetHeight;
         this.style.animation = 'shake .4s ease';
@@ -904,6 +944,17 @@
           el.addEventListener('input', clear, { once: true });
           el.addEventListener('change', clear, { once: true });
         });
+        if (tsIncomplete) {
+          tsRow.classList.add('ts-error');
+          /* Remove highlight once Turnstile completes */
+          const observer = new MutationObserver(() => {
+            if (document.querySelector('[name="cf-turnstile-response"]')?.value) {
+              tsRow.classList.remove('ts-error');
+              observer.disconnect();
+            }
+          });
+          observer.observe(document.getElementById('cf-turnstile'), { childList: true, subtree: true });
+        }
         return;
       }
 
@@ -933,6 +984,8 @@
         );
 
         /* Form data */
+        /* Include Turnstile token so FormSubmit receives it */
+        formData.append('cf-turnstile-response', tsToken);
         formData.append('Full Name', name);
         formData.append('email', email);
         formData.append('Phone Number', phone);
