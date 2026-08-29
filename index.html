@@ -845,6 +845,8 @@
             data-sitekey="0x4AAAAAAEg1iR6ySZVYrB0f"
             data-theme="light"
             data-size="normal"
+            data-callback="onTurnstileSuccess"
+            data-expired-callback="onTurnstileExpired"
             id="cf-turnstile">
           </div>
         </div>
@@ -879,6 +881,19 @@
   <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.1/build/js/intlTelInput.min.js"></script>
 
   <script>
+    /* ─── Turnstile callbacks ────────────────────────────────────────────────
+       These are called by Cloudflare automatically when the user passes or
+       when the token expires (after ~5 min). Using callbacks is more reliable
+       than reading the hidden input from the DOM. ── */
+    let turnstileToken = '';
+    function onTurnstileSuccess(token) {
+      turnstileToken = token;
+      document.getElementById('turnstile-row').classList.remove('ts-error');
+    }
+    function onTurnstileExpired() {
+      turnstileToken = '';
+    }
+
     /* ─── intl-tel-input init ─────────────────────────────────────────────── */
     const phoneInput = document.getElementById('f-phone');
     const iti = window.intlTelInput(phoneInput, {
@@ -918,9 +933,8 @@
       const phoneRawEmpty = !phoneInput.value.trim();
       const phoneInvalid  = !phoneRawEmpty && !iti.isValidNumber();
 
-      /* Turnstile token — set by Cloudflare after user passes the challenge */
-      const tsToken = document.querySelector('[name="cf-turnstile-response"]')?.value || '';
-      const tsRow   = document.getElementById('turnstile-row');
+      /* Turnstile token — populated by onTurnstileSuccess callback */
+      const tsRow = document.getElementById('turnstile-row');
 
       const bad = [
         !name                        && document.getElementById('f-name'),
@@ -930,8 +944,8 @@
         !terms                       && document.getElementById('f-terms'),
       ].filter(Boolean);
 
-      /* Also block if Turnstile hasn't been completed */
-      const tsIncomplete = !tsToken;
+      /* Also block if Turnstile hasn't been completed yet */
+      const tsIncomplete = !turnstileToken;
 
       if (bad.length || tsIncomplete) {
         this.style.animation = 'none';
@@ -944,17 +958,7 @@
           el.addEventListener('input', clear, { once: true });
           el.addEventListener('change', clear, { once: true });
         });
-        if (tsIncomplete) {
-          tsRow.classList.add('ts-error');
-          /* Remove highlight once Turnstile completes */
-          const observer = new MutationObserver(() => {
-            if (document.querySelector('[name="cf-turnstile-response"]')?.value) {
-              tsRow.classList.remove('ts-error');
-              observer.disconnect();
-            }
-          });
-          observer.observe(document.getElementById('cf-turnstile'), { childList: true, subtree: true });
-        }
+        if (tsIncomplete) tsRow.classList.add('ts-error');
         return;
       }
 
@@ -985,7 +989,7 @@
 
         /* Form data */
         /* Include Turnstile token so FormSubmit receives it */
-        formData.append('cf-turnstile-response', tsToken);
+        formData.append('cf-turnstile-response', turnstileToken);
         formData.append('Full Name', name);
         formData.append('email', email);
         formData.append('Phone Number', phone);
