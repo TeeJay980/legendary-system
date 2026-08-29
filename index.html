@@ -914,23 +914,39 @@
       errBanner.classList.remove('visible');
 
       try {
-        /* ── 1. Notify form owner via Web3Forms ── */
+        /* ── FormSubmit AJAX — free, no account needed.
+           Sends notification to mctjay80@gmail.com AND a confirmation
+           email back to the volunteer automatically via _autoresponse.
+           NOTE: On the very first submission, FormSubmit will send an
+           activation email to mctjay80@gmail.com — click the link once
+           to activate, and all future submissions will work instantly. ── */
         const formData = new FormData();
-        formData.append('access_key', '3a45032c-49e7-40d2-b8be-b9048c0e388a');
-        formData.append('subject', `New Volunteer Application from ${name}`);
-        formData.append('from_name', 'Community Volunteer Portal');
-        /* replyto lets you reply directly to the volunteer from your inbox */
-        formData.append('replyto', email);
+
+        /* Your receiving email */
+        formData.append('_subject', `New Volunteer Application from ${name}`);
+        formData.append('_template', 'table');
+        formData.append('_captcha', 'false');
+
+        /* Confirmation email sent automatically to the volunteer */
+        formData.append('_autoresponse',
+          `Hi ${name},\n\nThank you for signing up to volunteer with ivoterngo Community Cleaning!\n\nHere is a summary of your application:\n\n📞 Phone: ${phone}\n🧹 Activities: ${helpChecked.join(', ') || 'None selected'}\n💼 Experience: ${expText}\n📝 Notes: ${extra || 'None'}\n\nWe will reach out within 2–3 days with your first assignment.\n\nWarm regards,\nThe ivoterngo Team`
+        );
+
+        /* Form data */
         formData.append('Full Name', name);
-        formData.append('Email Address', email);
+        formData.append('email', email);
         formData.append('Phone Number', phone);
         formData.append('Prior Experience', expText);
         formData.append('Activities to Help With', helpChecked.join(', ') || 'None selected');
         formData.append('Additional Notes', extra || 'None');
 
-        const res  = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
+        const res  = await fetch('https://formsubmit.co/ajax/mctjay80@gmail.com', {
+          method: 'POST',
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        });
         const data = await res.json();
-        if (!res.ok || !data.success) throw new Error(data.message || 'Web3Forms failed');
+        if (!res.ok || data.success !== 'true') throw new Error('Submission failed');
 
       } catch (err) {
         console.error('Submission error:', err);
