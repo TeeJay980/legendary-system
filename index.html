@@ -844,29 +844,8 @@
 
   <!-- intl-tel-input JS -->
   <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.1/build/js/intlTelInput.min.js"></script>
-  <!-- EmailJS SDK (sends confirmation email to the volunteer) -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
   <script>
-    /* ─── EmailJS setup ──────────────────────────────────────────────────────
-       STEP 1 ▶ Sign up free at https://www.emailjs.com
-       STEP 2 ▶ Create an Email Service (Gmail / Outlook / etc.) and copy the Service ID
-       STEP 3 ▶ Create an Email Template. In the template body use these variables:
-                  {{to_name}}      – volunteer's full name
-                  {{to_email}}     – volunteer's email (set as the "To Email" field)
-                  {{phone}}        – phone number with country code
-                  {{activities}}   – chosen cleaning activities
-                  {{experience}}   – experience level
-                  {{message}}      – additional notes
-       STEP 4 ▶ Copy your Public Key from Account → API Keys
-       STEP 5 ▶ Fill in the three constants below and delete this comment block.
-    ─────────────────────────────────────────────────────────────────────── */
-    const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // ← paste here
-    const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // ← paste here
-    const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // ← paste here
-
-    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-
     /* ─── intl-tel-input init ─────────────────────────────────────────────── */
     const phoneInput = document.getElementById('f-phone');
     const iti = window.intlTelInput(phoneInput, {
@@ -940,6 +919,8 @@
         formData.append('access_key', '3a45032c-49e7-40d2-b8be-b9048c0e388a');
         formData.append('subject', `New Volunteer Application from ${name}`);
         formData.append('from_name', 'Community Volunteer Portal');
+        /* replyto lets you reply directly to the volunteer from your inbox */
+        formData.append('replyto', email);
         formData.append('Full Name', name);
         formData.append('Email Address', email);
         formData.append('Phone Number', phone);
@@ -951,17 +932,6 @@
         const data = await res.json();
         if (!res.ok || !data.success) throw new Error(data.message || 'Web3Forms failed');
 
-        /* ── 2. Send confirmation email to the volunteer via EmailJS ── */
-        if (EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
-          await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-            to_name:    name,
-            to_email:   email,
-            phone:      phone,
-            activities: helpChecked.join(', ') || 'None selected',
-            experience: expText,
-            message:    extra || 'None',
-          });
-        }
       } catch (err) {
         console.error('Submission error:', err);
         submitBtn.textContent = 'I volunteer!';
