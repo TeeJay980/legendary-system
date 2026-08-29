@@ -769,28 +769,24 @@
       submitBtn.disabled = true;
 
       try {
-        /* FormSubmit AJAX API - sends to mctjay80@gmail.com + autoresponder to volunteer */
-        await fetch('https://formsubmit.co/ajax/mctjay80@gmail.com', {
+        /* Web3Forms API - sends to mctjay80@gmail.com */
+        const formData = new FormData();
+        formData.append('access_key', '3a45032c-49e7-40d2-b8be-b9048c0e388a');
+        formData.append('subject', `New Volunteer Application from ${name}`);
+        formData.append('from_name', 'Community Volunteer Portal');
+        formData.append('Full Name', name);
+        formData.append('Email Address', email);
+        formData.append('Phone Number', phone);
+        formData.append('Prior Experience', exp);
+        formData.append('Activities to Help With', helpChecked.join(', ') || 'None selected');
+        formData.append('Additional Notes', extra || 'None');
+
+        await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({
-            _subject: `New Volunteer Application from ${name}`,
-            _autoresponse: `Hi ${name},\n\nThank you for signing up to volunteer with us! We have received your application and will be in touch within 2–3 days with next steps.\n\nBest regards,\nCommunity Volunteer Team`,
-            _template: 'table',
-            _captcha: 'false',
-            'Full Name': name,
-            'Email Address': email,
-            'Phone Number': phone,
-            'Prior Experience': exp,
-            'Activities to Help With': helpChecked.join(', ') || 'None selected',
-            'Additional Notes': extra || 'None'
-          })
+          body: formData
         });
       } catch (err) {
-        console.log('FormSubmit notification status:', err);
+        console.log('Web3Forms notification status:', err);
       }
 
       /* success transition */
